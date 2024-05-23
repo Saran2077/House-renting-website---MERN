@@ -138,16 +138,15 @@ const WishListPage = () => {
   }
 
   return (
-    <>
+    <div style={{backgroundColor:'#F7F6F6'}}>
     <NavBar />
     <Container sx={useStyles.container}>
       {wishlistItems?.length ? (
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <Typography variant="h4" gutterBottom>
-              My Wishlist
+             <strong> My Wishlist</strong>
             </Typography>
-            <Divider sx={{ marginBottom: "1rem" }} />
             {wishlistItems.map((item) => (
               <Card
                 key={item._id}
@@ -238,7 +237,7 @@ const WishListPage = () => {
         </Box>
       )}
     </Container>
-    </>
+    </div>
   );
 };
 

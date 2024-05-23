@@ -106,7 +106,7 @@ const PropertyDetailsForm = () => {
           })
         });
         const data = await response.json()
-        if (data.error){ return toast.error(data.error) }
+        if (data.error) { return toast.error(data.error) }
         toast.success("Property added successfully")
 
         // Reset form values after successful submission
@@ -122,217 +122,219 @@ const PropertyDetailsForm = () => {
   });
 
   return (
-    <>
-    <NavBar />
-    <Box style={useStyles.container}>
-      <Container component="main" maxWidth="sm">
-        <Paper elevation={6} style={useStyles.paper}>
-          <Avatar style={useStyles.avatar}>
-            <HomeIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Property Details
-          </Typography>
-          <form onSubmit={formik.handleSubmit} style={useStyles.form}>
-            <TextField
-              fullWidth
-              margin="normal"
-              variant="outlined"
-              id="title"
-              name="title"
-              label="Title"
-              value={formik.values.title}
-              onChange={formik.handleChange}
-              error={formik.touched.title && Boolean(formik.errors.title)}
-              helperText={formik.touched.title && formik.errors.title}
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              variant="outlined"
-              id="description"
-              name="description"
-              label="Description"
-              multiline
-              rows={4}
-              value={formik.values.description}
-              onChange={formik.handleChange}
-              error={formik.touched.description && Boolean(formik.errors.description)}
-              helperText={formik.touched.description && formik.errors.description}
-            />
+    <div style={{ backgroundColor: '#F7F6F6' }}>
 
-            <TextField
-              fullWidth
-              margin="normal"
-              variant="outlined"
-              id="street"
-              name="address.street" // Modified to access nested property
-              label="Street"
-              value={formik.values.address.street}
-              onChange={formik.handleChange}
-              error={formik.touched['address.street'] && Boolean(formik.errors['address.street'])}
-              helperText={formik.touched['address.street'] && formik.errors['address.street']}
-            />
-
-            <TextField
-              fullWidth
-              margin="normal"
-              variant="outlined"
-              id="state"
-              name="address.state" // Modified to access nested property
-              label="State"
-              value={formik.values.address.state}
-              onChange={formik.handleChange}
-              error={formik.touched['address.state'] && Boolean(formik.errors['address.state'])}
-              helperText={formik.touched['address.state'] && formik.errors['address.state']}
-            />
-
-            <TextField
-              fullWidth
-              margin="normal"
-              variant="outlined"
-              id="postalCode"
-              name="address.postalCode" // Modified to access nested property
-              label="PostalCode"
-              value={formik.values.address.postalCode}
-              onChange={formik.handleChange}
-              error={formik.touched['address.postalCode'] && Boolean(formik.errors['address.postalCode'])}
-              helperText={formik.touched['address.postalCode'] && formik.errors['address.postalCode']}
-            />
-
-            <TextField
-              fullWidth
-              margin="normal"
-              variant="outlined"
-              id="country"
-              name="address.country" // Modified to access nested property
-              label="Country"
-              value={formik.values.address.country}
-              onChange={formik.handleChange}
-              error={formik.touched['address.country'] && Boolean(formik.errors['address.country'])}
-              helperText={formik.touched['address.country'] && formik.errors['address.country']}
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              variant="outlined"
-              id="city"
-              name="address.city"
-              label="City"
-              value={formik.values.address.city}
-              onChange={formik.handleChange}
-              error={formik.touched['address.city'] && Boolean(formik.errors['address.city'])}
-              helperText={formik.touched['address.city'] && formik.errors['address.city']}
-            />
-
-            <TextField
-              fullWidth
-              margin="normal"
-              variant="outlined"
-              id="price"
-              name="price"
-              label="Price"
-              type="number"
-              value={formik.values.price}
-              onChange={formik.handleChange}
-              error={formik.touched.price && Boolean(formik.errors.price)}
-              helperText={formik.touched.price && formik.errors.price}
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              variant="outlined"
-              id="numberOfBedrooms"
-              name="numberOfBedrooms"
-              label="Number of Bedrooms"
-              type="number"
-              value={formik.values.numberOfBedrooms}
-              onChange={formik.handleChange}
-              error={formik.touched.numberOfBedrooms && Boolean(formik.errors.numberOfBedrooms)}
-              helperText={formik.touched.numberOfBedrooms && formik.errors.numberOfBedrooms}
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              variant="outlined"
-              id="numberOfBathrooms"
-              name="numberOfBathrooms"
-              label="Number of Bathrooms"
-              type="number"
-              value={formik.values.numberOfBathrooms}
-              onChange={formik.handleChange}
-              error={formik.touched.numberOfBathrooms && Boolean(formik.errors.numberOfBathrooms)}
-              helperText={formik.touched.numberOfBathrooms && formik.errors.numberOfBathrooms}
-            />
-            <TextField
-              fullWidth
-              margin="normal"
-              variant="outlined"
-              id="area"
-              name="area"
-              label="Area (sq ft)"
-              type="number"
-              value={formik.values.area}
-              onChange={formik.handleChange}
-              error={formik.touched.area && Boolean(formik.errors.area)}
-              helperText={formik.touched.area && formik.errors.area}
-            />
-            <FormGroup>
-              {amenitiesOptions.map((amenity) => (
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      value={amenity}
-                      onChange={formik.handleChange}
-                      name="amenities"
-                      checked={formik.values.amenities.includes(amenity)}
-                    />
-                  }
-                  label={amenity}
-                  key={amenity}
-                />
-              ))}
-            </FormGroup>
-            <Button
-              variant="contained"
-              component="label"
-              fullWidth
-              style={{ marginTop: '20px',
-                backgroundColor: "#C73659",
-              }}
-            >
-              Upload Images
-              <input
-                type="file"
-                hidden
-                multiple
-                onChange={handleImageChange}
+      <NavBar />
+      <Box style={useStyles.container}>
+        <Container component="main" maxWidth="sm">
+          <Paper elevation={6} style={useStyles.paper}>
+            <Avatar style={useStyles.avatar}>
+              <HomeIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Property Details
+            </Typography>
+            <form onSubmit={formik.handleSubmit} style={useStyles.form}>
+              <TextField
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                id="title"
+                name="title"
+                label="Title"
+                value={formik.values.title}
+                onChange={formik.handleChange}
+                error={formik.touched.title && Boolean(formik.errors.title)}
+                helperText={formik.touched.title && formik.errors.title}
               />
-            </Button>
-            {imgUrl && (
-              <Box style={{ marginTop: '20px' }}>
-                <Avatar
-                  src={imgUrl}
-                  style={{ margin: '5px', width: '60px', height: '60px' }}
-                />
-              </Box>
-            )}
-            <Button
-              fullWidth
-              variant="contained"
-              color="primary"
-              type="submit"
-              style={useStyles.submit}
-              disabled={!formik.isValid} // Disable the button if the form is not valid
-            >
-              Submit
-            </Button>
+              <TextField
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                id="description"
+                name="description"
+                label="Description"
+                multiline
+                rows={4}
+                value={formik.values.description}
+                onChange={formik.handleChange}
+                error={formik.touched.description && Boolean(formik.errors.description)}
+                helperText={formik.touched.description && formik.errors.description}
+              />
 
-          </form>
-        </Paper>
-      </Container>
-    </Box>
-    </>
+              <TextField
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                id="street"
+                name="address.street" // Modified to access nested property
+                label="Street"
+                value={formik.values.address.street}
+                onChange={formik.handleChange}
+                error={formik.touched['address.street'] && Boolean(formik.errors['address.street'])}
+                helperText={formik.touched['address.street'] && formik.errors['address.street']}
+              />
+
+              <TextField
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                id="state"
+                name="address.state" // Modified to access nested property
+                label="State"
+                value={formik.values.address.state}
+                onChange={formik.handleChange}
+                error={formik.touched['address.state'] && Boolean(formik.errors['address.state'])}
+                helperText={formik.touched['address.state'] && formik.errors['address.state']}
+              />
+
+              <TextField
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                id="postalCode"
+                name="address.postalCode" // Modified to access nested property
+                label="PostalCode"
+                value={formik.values.address.postalCode}
+                onChange={formik.handleChange}
+                error={formik.touched['address.postalCode'] && Boolean(formik.errors['address.postalCode'])}
+                helperText={formik.touched['address.postalCode'] && formik.errors['address.postalCode']}
+              />
+
+              <TextField
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                id="country"
+                name="address.country" // Modified to access nested property
+                label="Country"
+                value={formik.values.address.country}
+                onChange={formik.handleChange}
+                error={formik.touched['address.country'] && Boolean(formik.errors['address.country'])}
+                helperText={formik.touched['address.country'] && formik.errors['address.country']}
+              />
+              <TextField
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                id="city"
+                name="address.city"
+                label="City"
+                value={formik.values.address.city}
+                onChange={formik.handleChange}
+                error={formik.touched['address.city'] && Boolean(formik.errors['address.city'])}
+                helperText={formik.touched['address.city'] && formik.errors['address.city']}
+              />
+
+              <TextField
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                id="price"
+                name="price"
+                label="Price"
+                type="number"
+                value={formik.values.price}
+                onChange={formik.handleChange}
+                error={formik.touched.price && Boolean(formik.errors.price)}
+                helperText={formik.touched.price && formik.errors.price}
+              />
+              <TextField
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                id="numberOfBedrooms"
+                name="numberOfBedrooms"
+                label="Number of Bedrooms"
+                type="number"
+                value={formik.values.numberOfBedrooms}
+                onChange={formik.handleChange}
+                error={formik.touched.numberOfBedrooms && Boolean(formik.errors.numberOfBedrooms)}
+                helperText={formik.touched.numberOfBedrooms && formik.errors.numberOfBedrooms}
+              />
+              <TextField
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                id="numberOfBathrooms"
+                name="numberOfBathrooms"
+                label="Number of Bathrooms"
+                type="number"
+                value={formik.values.numberOfBathrooms}
+                onChange={formik.handleChange}
+                error={formik.touched.numberOfBathrooms && Boolean(formik.errors.numberOfBathrooms)}
+                helperText={formik.touched.numberOfBathrooms && formik.errors.numberOfBathrooms}
+              />
+              <TextField
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                id="area"
+                name="area"
+                label="Area (sq ft)"
+                type="number"
+                value={formik.values.area}
+                onChange={formik.handleChange}
+                error={formik.touched.area && Boolean(formik.errors.area)}
+                helperText={formik.touched.area && formik.errors.area}
+              />
+              <FormGroup>
+                {amenitiesOptions.map((amenity) => (
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        value={amenity}
+                        onChange={formik.handleChange}
+                        name="amenities"
+                        checked={formik.values.amenities.includes(amenity)}
+                      />
+                    }
+                    label={amenity}
+                    key={amenity}
+                  />
+                ))}
+              </FormGroup>
+              <Button
+                variant="contained"
+                component="label"
+                fullWidth
+                style={{
+                  marginTop: '20px',
+                  backgroundColor: "#C73659",
+                }}
+              >
+                Upload Images
+                <input
+                  type="file"
+                  hidden
+                  multiple
+                  onChange={handleImageChange}
+                />
+              </Button>
+              {imgUrl && (
+                <Box style={{ marginTop: '20px' }}>
+                  <Avatar
+                    src={imgUrl}
+                    style={{ margin: '5px', width: '60px', height: '60px' }}
+                  />
+                </Box>
+              )}
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                type="submit"
+                style={useStyles.submit}
+                disabled={!formik.isValid} // Disable the button if the form is not valid
+              >
+                Submit
+              </Button>
+
+            </form>
+          </Paper>
+        </Container>
+      </Box>
+    </div>
   );
 };
 

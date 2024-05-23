@@ -155,14 +155,15 @@ const WishListPage = () => {
     }
 
     return (
-        <>
+        <div style={{ backgroundColor: '#F7F6F6' }}>
+
             <NavBar />
             <Container sx={useStyles.container}>
                 {wishlistItems?.length ? (
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <Typography variant="h4" gutterBottom>
-                                My Selling
+                               <strong> My Selling</strong>
                             </Typography>
                             {/* <Divider sx={{ marginBottom: "1rem" }} /> */}
                             {wishlistItems.map((item) => (
@@ -263,7 +264,7 @@ const WishListPage = () => {
                         Add
                     </Button>
                 </Box>
-            </Container></>
+            </Container></div>
 
     );
 };
