@@ -2,7 +2,7 @@
 import React ,{useState } from "react";
 import { AppBar, Toolbar, Typography, Button, Avatar, Menu, MenuItem } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import backgroundImage from "../../data/background.jpg"; // Replace with your image path
+import backgroundImage from "../../data/background.jpg"; 
 import { Link, useNavigate } from 'react-router-dom';
 import { useRecoilState } from "recoil";
 import userAtom from "../../atom/userAtom.js";
@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
       flexGrow: 1,
     },
     appBar: {
-      background: 'linear-gradient(to right, #C73659, #C73659)', // Blue gradient example
+      background: 'linear-gradient(to right, #C73659, #C73659)',
       boxShadow: 'none',
     },
     title: {

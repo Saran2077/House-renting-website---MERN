@@ -98,4 +98,14 @@ const userProperty = async(req, res) => {
     }
 }
 
-export { addProperty, getProperty, likeUnlikeProperty, searchProperty }
+const getAllProperty = async(req, res) => {
+    try {
+        const property = await Property.find({})
+        res.status(200).json(property)
+    } catch (error) {
+        res.status(500).json({ error: error.message })
+        console.log(`Error in Get All Property: ${error.message}`)
+    }
+}
+
+export { addProperty, getProperty, likeUnlikeProperty, searchProperty, getAllProperty }
