@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { Container, Grid, Card, CardMedia, CardContent, Typography, Box, Button } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import Login from './component/Login';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import Signup from './component/signup';
+import HomePage from './component/HomePage';
+import SellingDetail from './component/SellingDetail'
 
 const useStyles = makeStyles({
   media: {
@@ -34,9 +38,14 @@ const App = () => {
   };
 
   return (
-    <>
-      <Login />
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/Login" element={<Login />} />
+        <Route path="/SellingDetail" element={<SellingDetail />} />
+      </Routes>
+    </Router>
   );
 };
 

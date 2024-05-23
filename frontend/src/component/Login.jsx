@@ -3,6 +3,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Container, Box, Typography, Button, TextField, Paper, Avatar } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
+import {useNavigate} from 'react-router-dom';
 
 const useStyles = {
   container: {
@@ -50,6 +51,8 @@ const Login = () => {
       console.log('Form Values:', values);
     } 
   }); 
+
+  const navigate = useNavigate();
  
   return ( 
     <Box style={useStyles.container}>
@@ -93,7 +96,9 @@ const Login = () => {
               style={useStyles.submit}
             >
               Login
-            </Button> 
+            </Button>
+            <p>Don't have an account 
+            <Button color="inherit" onClick={() => navigate("/signup")}>Sign Up</Button></p>
           </form> 
         </Paper>
       </Container>
