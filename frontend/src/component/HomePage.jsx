@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { AppBar, Toolbar, Typography, Button, Grid, Container, TextField, Select, MenuItem, FormControl, InputLabel } from '@material-ui/core';
+import { AppBar, Toolbar, Typography, Button, Grid, Container, TextField, Select, MenuItem, FormControl, InputLabel, Card, CardContent, CardMedia, CardActions } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import backgroundImage from "../data/background.jpg"; // Replace with your image path
 import { Link, useNavigate } from 'react-router-dom';
 import NavBar from './commons/navBar';
-
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -54,7 +53,22 @@ const useStyles = makeStyles((theme) => ({
     color: "#fff",
     height: '100%',
   },
+  cardGrid: {
+    padding: theme.spacing(4),
+  },
+  card: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  cardMedia: {
+    paddingTop: '56.25%', // 16:9
+  },
+  cardContent: {
+    flexGrow: 1,
+  },
 }));
+
 const HomePage = () => {
   const navigate = useNavigate();
   const classes = useStyles();
@@ -88,6 +102,33 @@ const HomePage = () => {
     // Implement search functionality here
     console.log('Searching with:', { location, bedrooms, bathrooms, price, amenities });
   };
+
+  const properties = [
+    {
+      sellerId: "664f4a7ec0e74df5be5c2f24",
+      title: "Big house",
+      description: "Saran house",
+      address: {
+        street: "Water Tank",
+        city: "Samalapuram",
+        state: "Tamil Nadu",
+        postalCode: "641663",
+        country: "India"
+      },
+      price: 10000,
+      numberOfBedrooms: 2,
+      numberOfBathrooms: 1,
+      area: 500,
+      amenities: ["pool", "gym", "school"],
+      images: [],
+      likes: [],
+      _id: "664f7b1eddba205bc454c8d5",
+      createdAt: "2024-05-23T17:21:34.768Z",
+      updatedAt: "2024-05-23T17:21:34.768Z",
+      __v: 0
+    }
+    // Add more properties here
+  ];
 
   return (
     <div className={classes.root}>
@@ -210,6 +251,46 @@ const HomePage = () => {
           </Container>
         </div>
       </div>
+      <Container className={classes.cardGrid} maxWidth="md">
+        <Grid container spacing={4}>
+          {properties.map((property) => (
+            <Grid item key={property._id} xs={12} sm={6} md={4}>
+              <Card className={classes.card}>
+                <CardMedia
+                  className={classes.cardMedia}
+                  image={property.images[0] || 'default-image.jpg'} // Fallback image if no images are available
+                  title={property.title}
+                />
+                <CardContent className={classes.cardContent}>
+                  <Typography gutterBottom variant="h5" component="h2">
+                    {property.title}
+                  </Typography>
+                  <Typography>
+                    {property.description}
+                  </Typography>
+                  <Typography>
+                    {property.address.city}, {property.address.state}
+                  </Typography>
+                  <Typography>
+                    ${property.price}
+                  </Typography>
+                  <Typography>
+                    {property.numberOfBedrooms} Beds, {property.numberOfBathrooms} Baths
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                  <Button size="small" color="primary">
+                    View
+                  </Button>
+                  <Button size="small" color="primary">
+                    Contact
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
     </div>
   );
 };
