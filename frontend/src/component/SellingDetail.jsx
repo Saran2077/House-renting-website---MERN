@@ -77,11 +77,11 @@ const PropertyDetailsForm = () => {
     validationSchema: Yup.object({
       title: Yup.string().required('Title is required'),
       description: Yup.string().required('Description is required'),
-      street: Yup.string().required('Street is required'),
-      city: Yup.string().required('City is required'),
-      state: Yup.string().required('State is required'),
-      postalCode: Yup.string().required('Pincode is required'),
-      country: Yup.string().required('Country is required'),
+      'address.street': Yup.string().required('Street is required'),
+      'address.city': Yup.string().required('City is required'),
+      'address.state': Yup.string().required('State is required'),
+      'address.postalCode': Yup.string().required('Postal Code is required'),
+      'address.country': Yup.string().required('Country is required'),
       price: Yup.number().required('Price is required'),
       bedrooms: Yup.number().required('Number of bedrooms is required'),
       bathrooms: Yup.number().required('Number of bathrooms is required'),
@@ -161,53 +161,53 @@ const PropertyDetailsForm = () => {
               error={formik.values.address.street && Boolean(formik.errors.address.street)}
               helperText={formik.values.address.street && formik.errors.address.street}
             />
-            <TextField
+          <TextField
               fullWidth
               margin="normal"
               variant="outlined"
-              id="city"
-              name="city"
-              label="City"
-              value={formik.values.address.city}
+              id="address.street"
+              name="address.street"
+              label="Street"
+              value={formik.values.address.street}
               onChange={formik.handleChange}
-              error={formik.values.address.city && Boolean(formik.errors.address.city)}
-              helperText={formik.values.address.city && formik.errors.address.city}
+              error={formik.touched['address.street'] && Boolean(formik.errors['address.street'])}
+              helperText={formik.touched['address.street'] && formik.errors['address.street']}
             />
             <TextField
               fullWidth
               margin="normal"
               variant="outlined"
-              id="state"
-              name="state"
+              id="address.state"
+              name="address.state"
               label="State"
               value={formik.values.address.state}
               onChange={formik.handleChange}
-              error={formik.values.address.state && Boolean(formik.errors.address.state)}
-              helperText={formik.values.address.state && formik.errors.address.state}
+              error={formik.touched['address.state'] && Boolean(formik.errors['address.state'])}
+              helperText={formik.touched['address.state'] && formik.errors['address.state']}
             />
             <TextField
               fullWidth
               margin="normal"
               variant="outlined"
-              id="postalCode"
-              name="postalCode"
-              label="postalCode"
+              id="address.postalCode"
+              name="address.postalCode"
+              label="PostalCode"
               value={formik.values.address.postalCode}
               onChange={formik.handleChange}
-              error={formik.values.address.postalCode && Boolean(formik.errors.address.postalCode)}
-              helperText={formik.values.address.postalCode && formik.errors.address.postalCode}
+              error={formik.touched['address.postalCode'] && Boolean(formik.errors['address.postalCode'])}
+              helperText={formik.touched['address.postalCode'] && formik.errors['address.postalCode']}
             />
             <TextField
               fullWidth
               margin="normal"
               variant="outlined"
-              id="country"
-              name="country"
+              id="address.country"
+              name="address.country"
               label="Country"
               value={formik.values.address.country}
               onChange={formik.handleChange}
-              error={formik.values.address.country && Boolean(formik.errors.address.country)}
-              helperText={formik.values.address.country && formik.errors.address.country}
+              error={formik.touched['address.country'] && Boolean(formik.errors['address.country'])}
+              helperText={formik.touched['address.country'] && formik.errors['address.country']}
             />
             <TextField
               fullWidth
