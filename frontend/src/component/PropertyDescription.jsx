@@ -1,17 +1,28 @@
 import { useEffect, useState } from "react";
-import { Container, Typography, Button, Grid, Box, CircularProgress } from "@mui/material";
+import {
+  Container,
+  Typography,
+  Box,
+  CircularProgress,
+  Divider,
+  Card,
+  CardContent,
+  CardMedia,
+  IconButton,
+  Button,
+} from "@mui/material";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import Divider from "@mui/material/Divider";
-import CardContainer from "../components/commons/cardContainer";
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import userAtom from "../atom/userAtom.js";
+import { useRecoilState } from "recoil";
 
 const PropertyDescription = () => {
   const [property, setProperty] = useState(null);
-  const [relatedProperty, setRelatedProperty] = useState(null)
   const { pid } = useParams();
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useRecoilState(userAtom);
 
   useEffect(() => {
     const getProperty = async () => {
@@ -20,14 +31,10 @@ const PropertyDescription = () => {
         const data = await res.json();
         if (data.error) return toast.error(data.error);
         setProperty(data);
-        const res2 = await fetch(`/api/category/${data?.category ?? ""}`)
-        const data2 = await res2.json()
-        if (data2.error) return toast.error(data2.error);
-        setRelatedProperty(data2)
       } catch (error) {
         console.error(error);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
     };
     getProperty();
@@ -38,91 +45,95 @@ const PropertyDescription = () => {
       const res = await fetch(`/api/user/wishlist`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          id: property._id
-        })
+          id: property._id,
+        }),
       });
-      const data = await res.json()
-      if (data.error) return toast.error(data.error)
-      let newUser = {...user, wishlist: data.wishlist}
-      toast.success(data.message)
-      setUser(newUser)
-      localStorage.setItem("user", JSON.stringify(newUser))
+      const data = await res.json();
+      if (data.error) return toast.error(data.error);
+      let newUser = { ...user, wishlist: data.wishlist };
+      toast.success(data.message);
+      setUser(newUser);
+      localStorage.setItem("user", JSON.stringify(newUser));
     } catch (error) {
-      toast.error(error)
+      toast.error(error);
     }
-  }
-  
+  };
+
+  const handleInterested = () => {
+    // Implement your logic here
+    toast.info("You're interested in this property!");
+  };
+
+  const handleLike = () => {
+    // Implement your logic here
+    toast.info("You liked this property!");
+  };
+
   if (isLoading) {
     return (
-      <Box sx={{display: "grid", placeContent: "center", minHeight: "100%"}}>
+      <Box
+        sx={{
+          display: "grid",
+          placeContent: "center",
+          minHeight: "100vh",
+        }}
+      >
         <CircularProgress disableShrink />
       </Box>
-    )
+    );
   }
 
   return (
-    <>
+    <Container>
       {property && (
-        <Container>
-          <Grid
-            container
-            spacing={6}
-            style={{ marginBottom: "2rem", marginTop: "1rem" }}
-          >
-            <Grid alignContent={"center"} item xs={12} md={6} height={"70vh"} style={{ position: 'relative' }}>
-              <img
-                src={property.image}
-                alt="Product"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />{user &&
-                user.wishlist.includes(property._id) ?
-                <FavoriteIcon style={{ position: 'absolute', bottom: '10px', right: '10px', backgroundColor: 'white',borderRadius: '50%', color: "red", padding: '5px', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }} onClick={handleWishList} />
-                :
-                <FavoriteBorderIcon style={{ position: 'absolute', bottom: '10px', right: '10px', backgroundColor: 'white', borderRadius: '50%', padding: '5px', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }} onClick={handleWishList} /> 
-              }
-              
-            </Grid>
-            <Grid item xs={12} md={6} p={1} spacing={2}>
-              <Typography variant="h2" gutterBottom sx={{ fontWeight: 700 }}>
-                {property.title}
-              </Typography>
-
-              <Typography variant="h5" gutterBottom>
-              Property Description
-              </Typography>
-              <Typography variant="body1" mb={2}>
+        <>
+          <Box sx={{ mb: 4 }}>
+            <Typography variant="h2" sx={{ fontWeight: 700 }}>
+              {property.title}
+            </Typography>
+          </Box>
+          <Divider />
+          <Card sx={{ mt: 4 }}>
+            <CardMedia
+              component="img"
+              height="400"
+              image={property.image}
+              alt={property.title}
+            />
+            <CardContent>
+              <Typography variant="body1" gutterBottom>
                 {property.description}
               </Typography>
-              <Divider aria-hidden="true" />
-              <Typography variant="h6" mt={1.5} mb={1.5}>
-              Price:<b>₹{property.price}</b>  
+              <Divider />
+              <Typography variant="h6" mt={2} mb={1}>
+                Price: ₹{property.price}
               </Typography>
-              <Button
-                variant="contained"
-                color="primary"
-                style={{ marginRight: "1rem" }}
-                onClick={addToCart}
-              >
-                I'm interested
-              </Button>
-            </Grid>
-          </Grid>
-
-          <Typography variant="h5" sx={{fontWeight: 700}} gutterBottom>
-          You might be interested in
-          </Typography>
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6} md={12}>
-              {relatedProperty &&  <CardContainer cards={relatedProperty} isShowTitle={false}/>
-              }
-            </Grid>
-          </Grid>
-        </Container>
+              <Typography variant="body2" gutterBottom>
+                Address:
+              </Typography>
+              <Typography variant="body2" gutterBottom>
+                {property.address.street}, {property.address.city},{" "}
+                {property.address.state}, {property.address.postalCode},{" "}
+                {property.address.country}
+              </Typography>
+              <Box mt={2} display="flex" alignItems="center">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleInterested}
+                  sx={{ ml: "auto" }}
+                >
+                  I'm interested
+                </Button>
+              </Box>
+            </CardContent>
+          </Card>
+        </>
       )}
-    </>
+    </Container>
   );
 };
 

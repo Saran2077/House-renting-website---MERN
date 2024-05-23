@@ -2,6 +2,7 @@ import Property from "./../models/propertyModel.js"
 
 const addProperty = async(req, res) => {
     try {
+        console.log("addproperty")
         const { sellerId, title, description, address, price, numberOfBathrooms, numberOfBedrooms, area, amenities, images} = req.body;
 
         const newProperty = new Property({
@@ -84,6 +85,16 @@ const searchProperty = async(req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message })
         console.log(`Error in search: ${error.message}`)
+    }
+}
+
+const userProperty = async(req, res) => {
+    try {
+        const user = req.user;
+        
+    } catch (error) {
+        res.status(500).json({ error: error.message })
+        console.log(`Error in User: ${error.message}`)
     }
 }
 

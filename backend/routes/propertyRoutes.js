@@ -5,7 +5,7 @@ import protectRoute from "../middlewares/protectRoute.js"
 
 const router = express.Router()
 
-router.post("/add", propertyValidator,protectRoute , addProperty)
+router.post("/add", propertyValidator, protectRoute , addProperty)
 
 router.post("/search", searchProperty)
 

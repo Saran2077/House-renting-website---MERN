@@ -6,9 +6,11 @@ import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-ro
 import Signup from './component/signup';
 import HomePage from './component/HomePage';
 import Seller from './component/Seller'
+import SellingDetail from './component/SellingDetail.jsx'
 import { useRecoilValue } from 'recoil';
 import userAtom from './atom/userAtom.js';
 import WishLIstPage from './component/WishListPage.jsx';
+import PropertyDescription from './component/PropertyDescription.jsx';
 
 const useStyles = makeStyles({
   media: {
@@ -48,7 +50,9 @@ const App = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/" />} />
         <Route path="/Login" element={!user ? <Login /> : <Navigate to="/" />} />
-        <Route path="/SellingDetail" element={<Seller />} />
+        <Route path="/property/:pid" element={<PropertyDescription />} />
+        <Route path="/SellingDetail" element={<SellingDetail />} />
+        <Route path="/seller" element={<Seller />} />
         <Route path="/wishlist" element={user ? <WishLIstPage /> : <Navigate to="/Login" />} />
       </Routes>
     </Router>

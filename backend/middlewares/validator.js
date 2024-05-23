@@ -44,6 +44,8 @@ const propertyValidator = (req, res, next) => {
         amenities: Joi.array().items(Joi.string()).default([]), // Array of strings
         images: Joi.array().items(Joi.string()).default([]), // Array of image URLs
       });
+
+      
         
     const { error } = propertySchema.validate(req.body);
 

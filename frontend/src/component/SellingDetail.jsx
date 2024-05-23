@@ -15,6 +15,9 @@ import {
   FormGroup,
 } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
+import usePreviewImg from '../hooks/usePreviewImg';
+import { useRecoilValue } from 'recoil';
+import userAtom from '../atom/userAtom.js';
 
 
 const useStyles = {
@@ -49,18 +52,22 @@ const useStyles = {
 };
 
 const PropertyDetailsForm = () => {
-  const [images, setImages] = useState([]);
+  const user = useRecoilValue(userAtom)
+  const { imgUrl, handleImageChange } = usePreviewImg();
   const amenitiesOptions = ['Swimming Pool', 'Gym', 'Parking', 'Garden'];
 
   const formik = useFormik({
     initialValues: {
+      sellerId: user._id,
       title: '',
       description: '',
-      street: '',
-      city: '',
-      state: '',
-      pincode: '',
-      country: '',
+      address: {
+        street: '',
+        city: '',
+        state: '',
+        postalCode: '',
+        country: '',
+      },
       price: '',
       bedrooms: '',
       bathrooms: '',
@@ -73,22 +80,37 @@ const PropertyDetailsForm = () => {
       street: Yup.string().required('Street is required'),
       city: Yup.string().required('City is required'),
       state: Yup.string().required('State is required'),
-      pincode: Yup.string().required('Pincode is required'),
+      postalCode: Yup.string().required('Pincode is required'),
       country: Yup.string().required('Country is required'),
       price: Yup.number().required('Price is required'),
       bedrooms: Yup.number().required('Number of bedrooms is required'),
       bathrooms: Yup.number().required('Number of bathrooms is required'),
       area: Yup.number().required('Area is required'),
     }),
-    onSubmit: (values) => {
-      console.log('Form Values:', values);
-      console.log('Images:', images);
-    },
-  });
+    onSubmit: async (values) => {
+      try {
+        const response = await fetch('/api/property/add', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            ...values, images: [imgUrl], address: {
 
-  const handleImagesChange = (event) => {
-    setImages(Array.from(event.currentTarget.files));
-  };
+            }
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+          throw new Error('Added failed');
+        }
+      } catch (error) {
+        console.log('Error:', error);
+      }
+    }
+  });
 
   return (
     <Box style={useStyles.container}>
@@ -134,10 +156,10 @@ const PropertyDetailsForm = () => {
               id="street"
               name="street"
               label="Street"
-              value={formik.values.street}
+              value={formik.values.address.street}
               onChange={formik.handleChange}
-              error={formik.touched.street && Boolean(formik.errors.street)}
-              helperText={formik.touched.street && formik.errors.street}
+              error={formik.values.address.street && Boolean(formik.errors.address.street)}
+              helperText={formik.values.address.street && formik.errors.address.street}
             />
             <TextField
               fullWidth
@@ -146,10 +168,10 @@ const PropertyDetailsForm = () => {
               id="city"
               name="city"
               label="City"
-              value={formik.values.city}
+              value={formik.values.address.city}
               onChange={formik.handleChange}
-              error={formik.touched.city && Boolean(formik.errors.city)}
-              helperText={formik.touched.city && formik.errors.city}
+              error={formik.values.address.city && Boolean(formik.errors.address.city)}
+              helperText={formik.values.address.city && formik.errors.address.city}
             />
             <TextField
               fullWidth
@@ -158,22 +180,22 @@ const PropertyDetailsForm = () => {
               id="state"
               name="state"
               label="State"
-              value={formik.values.state}
+              value={formik.values.address.state}
               onChange={formik.handleChange}
-              error={formik.touched.state && Boolean(formik.errors.state)}
-              helperText={formik.touched.state && formik.errors.state}
+              error={formik.values.address.state && Boolean(formik.errors.address.state)}
+              helperText={formik.values.address.state && formik.errors.address.state}
             />
             <TextField
               fullWidth
               margin="normal"
               variant="outlined"
-              id="pincode"
-              name="pincode"
-              label="Pincode"
-              value={formik.values.pincode}
+              id="postalCode"
+              name="postalCode"
+              label="postalCode"
+              value={formik.values.address.postalCode}
               onChange={formik.handleChange}
-              error={formik.touched.pincode && Boolean(formik.errors.pincode)}
-              helperText={formik.touched.pincode && formik.errors.pincode}
+              error={formik.values.address.postalCode && Boolean(formik.errors.address.postalCode)}
+              helperText={formik.values.address.postalCode && formik.errors.address.postalCode}
             />
             <TextField
               fullWidth
@@ -182,10 +204,10 @@ const PropertyDetailsForm = () => {
               id="country"
               name="country"
               label="Country"
-              value={formik.values.country}
+              value={formik.values.address.country}
               onChange={formik.handleChange}
-              error={formik.touched.country && Boolean(formik.errors.country)}
-              helperText={formik.touched.country && formik.errors.country}
+              error={formik.values.address.country && Boolean(formik.errors.address.country)}
+              helperText={formik.values.address.country && formik.errors.address.country}
             />
             <TextField
               fullWidth
@@ -266,19 +288,15 @@ const PropertyDetailsForm = () => {
                 type="file"
                 hidden
                 multiple
-                onChange={handleImagesChange}
+                onChange={handleImageChange}
               />
             </Button>
-            {images.length > 0 && (
+            {imgUrl && (
               <Box style={{ marginTop: '20px' }}>
-                {images.map((image, index) => (
-                  <Avatar
-                    key={index}
-                    src={URL.createObjectURL(image)}
-                    alt={`Image ${index + 1}`}
-                    style={{ margin: '5px', width: '60px', height: '60px' }}
-                  />
-                ))}
+                <Avatar
+                  src={imgUrl}
+                  style={{ margin: '5px', width: '60px', height: '60px' }}
+                />
               </Box>
             )}
             <Button
