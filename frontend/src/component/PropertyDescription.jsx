@@ -17,6 +17,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import userAtom from "../atom/userAtom.js";
 import { useRecoilState } from "recoil";
+import NavBar from "./commons/navBar.jsx";
 
 const PropertyDescription = () => {
   const [property, setProperty] = useState(null);
@@ -63,7 +64,6 @@ const PropertyDescription = () => {
   };
 
   const handleInterested = () => {
-    // Implement your logic here
     toast.info("You're interested in this property!");
   };
 
@@ -85,55 +85,81 @@ const PropertyDescription = () => {
       </Box>
     );
   }
+  console.log(property.images[0]);
 
   return (
-    <Container>
-      {property && (
-        <>
-          <Box sx={{ mb: 4 }}>
-            <Typography variant="h2" sx={{ fontWeight: 700 }}>
-              {property.title}
-            </Typography>
-          </Box>
-          <Divider />
-          <Card sx={{ mt: 4 }}>
-            <CardMedia
-              component="img"
-              height="400"
-              image={property.image}
-              alt={property.title}
-            />
-            <CardContent>
-              <Typography variant="body1" gutterBottom>
-                {property.description}
+    <>
+      <NavBar></NavBar>
+      <Container>
+        {property && (
+          <>
+            <Box sx={{ mb: 4 }}>
+              <Typography variant="h2" sx={{ mt: 2, fontWeight: 700 }}>
+                {property.title}
               </Typography>
-              <Divider />
-              <Typography variant="h6" mt={2} mb={1}>
-                Price: ₹{property.price}
+              <Typography>
+                {property.address.city}, {property.address.state}
               </Typography>
-              <Typography variant="body2" gutterBottom>
-                Address:
-              </Typography>
-              <Typography variant="body2" gutterBottom>
-                {property.address.street}, {property.address.city},{" "}
-                {property.address.state}, {property.address.postalCode},{" "}
-                {property.address.country}
-              </Typography>
-              <Box mt={2} display="flex" alignItems="center">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleInterested}
-                  sx={{ ml: "auto" }}
+            </Box>
+            <Card sx={{ mt: 4 }}>
+              <CardMedia
+                component="img"
+                height="400"
+                image={property.images[0]}
+                alt={property.title}
+              />
+              <CardContent>
+                <Typography
+                  component={"div"}
+                  sx={{
+                    border: "1px solid",
+                    padding: "5px 10px",
+                    width: "fit-content",
+                    borderRadius: "5px",
+                    color: "#C73659",
+                  }}
                 >
-                  I'm interested
-                </Button>
-              </Box>
-            </CardContent>
-          </Card>
-        </>
-      )}
-    </Container>
+                  {property.numberOfBedrooms}{" "}
+                  {property.numberOfBedrooms > 1 ? "BEDROOMS" : "BEDROOM"}
+                </Typography>
+
+                <Typography variant="body1" sx={{ marginTop: 2 }} gutterBottom>
+                  {property.description}
+                </Typography>
+                <Typography variant="h5" mt={2} mb={1}>
+                  Price: <b>₹{property.price}</b>
+                </Typography>
+                <Typography variant="body2" gutterBottom>
+                  Address:
+                </Typography>
+                <Typography variant="body2" gutterBottom>
+                  {property.address.street}, {property.address.city},{" "}
+                  {property.address.state}, {property.address.postalCode},{" "}
+                  {property.address.country}
+                </Typography>
+                <Box mt={2} display="flex" alignItems="center">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleInterested}
+                    sx={{
+                      ml: "auto",
+                      backgroundColor: "#C73659",
+                      "&:hover": {
+                        backgroundColor: "#C73659",
+                        boxShadow: "none",
+                      },
+                    }}
+                  >
+                    I'm interested
+                  </Button>
+                </Box>
+              </CardContent>
+            </Card>
+          </>
+        )}
+      </Container>
+    </>
   );
 };
 

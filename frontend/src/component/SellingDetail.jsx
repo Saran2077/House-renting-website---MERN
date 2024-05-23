@@ -44,17 +44,18 @@ const useStyles = {
   },
   form: {
     width: '100%',
-    marginTop: '20px',
+    marginTop: '10px',
   },
   submit: {
     marginTop: '30px',
+    backgroundColor: "#C73659",
   },
 };
 
 const PropertyDetailsForm = () => {
   const user = useRecoilValue(userAtom)
   const { imgUrl, handleImageChange } = usePreviewImg();
-  const amenitiesOptions = ['Swimming Pool', 'Gym', 'Parking', 'Garden'];
+  const amenitiesOptions = ['Shopping Mall', 'Gym', 'School', 'Hospital'];
 
   const formik = useFormik({
     initialValues: {
@@ -281,7 +282,9 @@ const PropertyDetailsForm = () => {
               variant="contained"
               component="label"
               fullWidth
-              style={{ marginTop: '20px' }}
+              style={{ marginTop: '20px',
+                backgroundColor: "#C73659",
+              }}
             >
               Upload Images
               <input

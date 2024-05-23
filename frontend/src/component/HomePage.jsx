@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, Grid, Container, TextField, Select, MenuItem, FormControl, InputLabel, Card, CardContent, CardMedia, CardActions } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import backgroundImage from "../data/background.jpg"; // Replace with your image path
@@ -102,34 +102,15 @@ const HomePage = () => {
     // Implement search functionality here
     console.log('Searching with:', { location, bedrooms, bathrooms, price, amenities });
   };
-
-  const properties = [
-    {
-      sellerId: "664f4a7ec0e74df5be5c2f24",
-      title: "Big house",
-      description: "Saran house",
-      address: {
-        street: "Water Tank",
-        city: "Samalapuram",
-        state: "Tamil Nadu",
-        postalCode: "641663",
-        country: "India"
-      },
-      price: 10000,
-      numberOfBedrooms: 2,
-      numberOfBathrooms: 1,
-      area: 500,
-      amenities: ["pool", "gym", "school"],
-      images: [],
-      likes: [],
-      _id: "664f7b1eddba205bc454c8d5",
-      createdAt: "2024-05-23T17:21:34.768Z",
-      updatedAt: "2024-05-23T17:21:34.768Z",
-      __v: 0
+  const [properties, setProperty] = useState([])
+  useEffect(() => {
+    const geti = async() => {
+        const res = await fetch("/api/property")
+        const data = await res.json()
+        setProperty(data)
     }
-    // Add more properties here
-  ];
-
+    geti()
+  }, [])
   return (
     <div className={classes.root}>
       <NavBar />
@@ -234,6 +215,7 @@ const HomePage = () => {
                     <MenuItem value="Schools">Schools</MenuItem>
                     <MenuItem value="Hospitals">Hospitals</MenuItem>
                     <MenuItem value="Shopping Malls">Shopping Malls</MenuItem>
+                    <MenuItem value="Shopping Malls">Gym</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
