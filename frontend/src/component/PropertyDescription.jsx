@@ -10,18 +10,23 @@ import {
   CardMedia,
   IconButton,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";
 import userAtom from "../atom/userAtom.js";
 import { useRecoilState } from "recoil";
 
 const PropertyDescription = () => {
   const [property, setProperty] = useState(null);
+  const [seller, setSeller] = useState(null);
   const { pid } = useParams();
   const [isLoading, setIsLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [user, setUser] = useRecoilState(userAtom);
 
   useEffect(() => {
@@ -62,9 +67,20 @@ const PropertyDescription = () => {
     }
   };
 
-  const handleInterested = () => {
-    // Implement your logic here
-    toast.info("You're interested in this property!");
+  const handleInterested = async () => {
+    try {
+      const res = await fetch(`/api/user/${property.sellerId}`);
+      const data = await res.json();
+      if (data.error) return toast.error(data.error);
+      setSeller(data);
+      setIsModalOpen(true);
+    } catch (error) {
+      toast.error(error);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   const handleLike = () => {
@@ -132,6 +148,28 @@ const PropertyDescription = () => {
             </CardContent>
           </Card>
         </>
+      )}
+
+      {seller && (
+        <Dialog open={isModalOpen} onClose={handleCloseModal}>
+          <DialogTitle>Seller Details</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Name: {seller.firstName+" "+seller.lastName}
+            </DialogContentText>
+            <DialogContentText>
+              Email: {seller.email}
+            </DialogContentText>
+            <DialogContentText>
+              Phone: {seller.phoneNumber}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseModal} color="primary">
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
       )}
     </Container>
   );

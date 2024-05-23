@@ -76,7 +76,7 @@ const searchProperty = async(req, res) => {
         if (price) {
         query.price = { $lte: parseInt(price, 10) };
         }
-        if (amenities) {
+        if (amenities.length > 0) {
         query.amenities = { $all: amenities.split(',') };
         }
 

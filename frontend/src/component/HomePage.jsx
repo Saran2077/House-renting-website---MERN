@@ -1,46 +1,78 @@
 import React, { useEffect, useState } from 'react';
-import { AppBar, Toolbar, Typography, Button, Grid, Container, TextField, Select, MenuItem, FormControl, InputLabel, Card, CardContent, CardMedia, CardActions } from '@material-ui/core';
+import { Typography, Button, Grid, Container, Card, CardContent, CardMedia, CardActions, Divider, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import backgroundImage from "../data/background.jpg"; // Replace with your image path
 import { useNavigate } from 'react-router-dom';
 import NavBar from './commons/navBar';
+import { Favorite as FavoriteIcon, FavoriteBorder as FavoriteBorderIcon } from '@material-ui/icons'; // Import the favorite icon
+import { toast } from 'react-toastify';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import userAtom from '../atom/userAtom.js';
+import HomeBanner from './homeBanner.jsx';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
-  // Your existing styles here...
   card: {
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
-    position: 'relative', // Ensure position is relative for absolute positioning of bedroom count
-    backgroundColor:'#F7F6F6'
+    backgroundColor: '#F7F6F6',
+    position: 'relative', // Ensure position is relative for absolute positioning of wishlist icon
+    transition: 'transform 0.3s', // Add transition effect for hover
+    '&:hover': {
+      transform: 'scale(1.05)', // Scale up the card on hover
+    },
   },
   cardMedia: {
-    paddingTop: '56.25%', // 16:9
     position: 'relative', // Ensure position is relative for absolute positioning of bedroom count
+    paddingTop: '56.25%', // 16:9
   },
-  bedroomsCount: {
-    position: 'absolute',
-    top: theme.spacing(1),
-    left: theme.spacing(1),
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-    padding: theme.spacing(1),
-    borderRadius: theme.spacing(1),
+  cardContent: {
+    flexGrow: 1, // Ensure card content takes remaining space
   },
   cardActions: {
-    marginTop: 'auto', // Push actions to the bottom of the card
+    display: 'flex',
+    height: '80px',
+    justifyContent: 'center',
+    alignItems: 'center', // Center items vertically
+    position: 'relative', // Ensure position is relative for absolute positioning of wishlist icon
   },
   button: {
     marginRight: theme.spacing(1),
   },
+  wishlistIcon: {
+    position: 'absolute',
+    bottom: 0,
+    right: 4,
+    color: '#C73659',
+    cursor: 'pointer',
+  },
+  bedroomsCount: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    padding: theme.spacing(1),
+  },
+  contactButton: {
+    width: '100%',
+    padding: '8px 12px',
+    backgroundColor: 'black',
+    color: 'white',
+    borderRadius: 0
+  },
+  divider: {
+    marginTop: 20,
+    marginBottom: 20
+  }
 }));
 
 const HomePage = () => {
   const navigate = useNavigate();
   const classes = useStyles();
   const [properties, setProperties] = useState([]);
+  const [user, setUser] = useRecoilState(userAtom)
 
   // Fetch properties on component mount
   useEffect(() => {
@@ -56,13 +88,53 @@ const HomePage = () => {
     getProperties();
   }, []);
 
+  // Function to toggle wishlist item
+  const toggleWishlist = async (propertyId) => {
+    if (!user) return navigate("/Login")
+    try {
+      const res = await fetch("/api/user/wishlist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ id: propertyId })
+      })
+      const data = await res.json()
+      if (data.error) return toast.error(data.error)
+      toast.success(data.message)
+      const newUser = { ...user, wishlist: data.wishlist }
+      localStorage.setItem("user", JSON.stringify(newUser))
+      setUser(newUser)
+
+    } catch (error) {
+      console.log(error)
+    }
+  };
+
+
+
   return (
     <div className={classes.root}>
       <NavBar />
+      <HomeBanner setProperties={setProperties} />
+      <Container sx={{ textAlign: 'center', py: 6 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <Typography variant="h2" component={'div'} style={{ textAlign: 'center', paddingTop: '60px', paddingBottom: '10px' }}>
+            <strong>Properties</strong>
+          </Typography>
+        </Box>
+        <div style={{ width: '100%', display: 'flex', textAlign: 'center', justifyContent: 'center',flexDirection:'column'}}>
+          <Divider style={{ width: '100px', borderBottomWidth: 3, borderBottomColor: 'orange', margin: 'auto' }} />
+          <Typography variant="body1" color="textSecondary" style={{ marginTop: '20px',marginBottom:'60px' ,fontSize:'26px'}}>
+            We provide our clients with the best real estate deals. <br></br>Browse some of our featured & hot properties below or browse <br></br> our website for more offers.
+          </Typography>
+        </div>
+
+      </Container>
       {/* Your existing code for background and search form */}
       <Container className={classes.cardGrid} maxWidth="md">
         <Grid container spacing={4}>
-          {properties.map((property) => (
+          {properties.length > 0 ? (properties.map((property) => (
             <Grid item key={property._id} xs={12} sm={6} md={4}>
               <Card className={classes.card}>
                 <CardMedia
@@ -71,37 +143,46 @@ const HomePage = () => {
                   title={property.title}
                 >
                   <Typography variant="body2" className={classes.bedroomsCount}>
-                    {property.numberOfBedrooms} Beds
+                    {property.numberOfBedrooms} {property.numberOfBedrooms > 1 ? 'BEDROOMS' : 'BEDROOM'}
                   </Typography>
                 </CardMedia>
                 <CardContent className={classes.cardContent}>
-                  <Typography gutterBottom variant="h5" component="h2">
+                  <Typography gutterBottom variant="h" component="h2">
                     {property.title}
-                  </Typography>
-                  <Typography>
-                    {property.description}
                   </Typography>
                   <Typography>
                     {property.address.city}, {property.address.state}
                   </Typography>
+                  <Divider className={classes.divider} />
                   <Typography>
                     ${property.price}
                   </Typography>
-                  <Typography>
-                    {property.numberOfBedrooms} Beds, {property.numberOfBathrooms} Baths
-                  </Typography>
                 </CardContent>
                 <CardActions className={classes.cardActions}>
-                  <Button size="small" color="primary" className={classes.button}>
-                    View
-                  </Button>
-                  <Button size="small" color="primary" className={classes.button}>
-                    Contact
-                  </Button>
+                  <div>
+                    <Button size="small" variant="contained" className={classes.contactButton} onClick={() => navigate(`/property/${property._id}`)}
+                      sx={{
+                        "&:hover": {
+                          backgroundColor: "#C73659",
+                          boxShadow: "none",
+                        }
+                      }}>
+                      VIEW DETAILS
+                    </Button>
+                  </div>
+                  <div className={classes.wishlistIcon}>
+                    {user && user.wishlist.includes(property._id) ? ( // Render filled or outline wishlist icon based on selection state
+                      <FavoriteIcon onClick={() => toggleWishlist(property._id)} />
+                    ) : (
+                      <FavoriteBorderIcon onClick={() => toggleWishlist(property._id)} />
+                    )}
+                  </div>
                 </CardActions>
               </Card>
             </Grid>
-          ))}
+          ))) : (
+            <div style={{ height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>No search results</div>
+          )}
         </Grid>
       </Container>
     </div>
@@ -109,3 +190,4 @@ const HomePage = () => {
 };
 
 export default HomePage;
+

@@ -99,4 +99,18 @@ const logout = async (req, res) => {
     }
   }
 
-export { register, login, addRemoveWishlist, getWishList, logout }
+const getSeller = async(req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findById(id)
+        if(!user) {
+            return res.status(404).json({ error: "Sellar not found "})
+        }
+        res.status(200).json(user)
+    } catch (error) {
+        res.status(500).json({ error: error.message })
+        console.log(`Error in GetSeller: ${error.message}`) 
+    }
+}
+
+export { register, login, addRemoveWishlist, getWishList, logout, getSeller }

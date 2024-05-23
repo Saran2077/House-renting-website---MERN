@@ -18,6 +18,7 @@ import userAtom from "../atom/userAtom.js";
 import { toast } from "react-toastify";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import NavBar from "./commons/navBar.jsx";
 
 const useStyles = {
   container: {
@@ -137,6 +138,8 @@ const WishListPage = () => {
   }
 
   return (
+    <>
+    <NavBar />
     <Container sx={useStyles.container}>
       {wishlistItems?.length ? (
         <Grid container spacing={2}>
@@ -235,6 +238,7 @@ const WishListPage = () => {
         </Box>
       )}
     </Container>
+    </>
   );
 };
 
