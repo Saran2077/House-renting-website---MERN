@@ -90,4 +90,13 @@ const getWishList = async (req, res) => {
     }
 }
 
-export { register, login, addRemoveWishlist, getWishList }
+const logout = async (req, res) => {
+    try {
+      res.cookie("jwt", "", {maxAge:1})
+      res.status(200).json({ message: "Logout Successfully" })
+    } catch (error) {
+      console.log(`Error in logout: ${error.message}`)
+    }
+  }
+
+export { register, login, addRemoveWishlist, getWishList, logout }
