@@ -18,6 +18,8 @@ import HomeIcon from '@mui/icons-material/Home';
 import usePreviewImg from '../hooks/usePreviewImg';
 import { useRecoilValue } from 'recoil';
 import userAtom from '../atom/userAtom.js';
+import { toast } from 'react-toastify';
+import NavBar from './commons/navBar.jsx';
 
 
 const useStyles = {
@@ -69,24 +71,27 @@ const PropertyDetailsForm = () => {
         country: '',
       },
       price: '',
-      bedrooms: '',
-      bathrooms: '',
+      numberOfBedrooms: '',
+      numberOfBathrooms: '',
       area: '',
       amenities: [],
     },
     validationSchema: Yup.object({
       title: Yup.string().required('Title is required'),
       description: Yup.string().required('Description is required'),
-      'address.street': Yup.string().required('Street is required'),
-      'address.city': Yup.string().required('City is required'),
-      'address.state': Yup.string().required('State is required'),
-      'address.postalCode': Yup.string().required('Postal Code is required'),
-      'address.country': Yup.string().required('Country is required'),
+      address: Yup.object().shape({
+        street: Yup.string().required('Street is required'),
+        city: Yup.string().required('City is required'),
+        state: Yup.string().required('State is required'),
+        postalCode: Yup.string().required('Postal Code is required'),
+        country: Yup.string().required('Country is required'),
+      }),
       price: Yup.number().required('Price is required'),
-      bedrooms: Yup.number().required('Number of bedrooms is required'),
-      bathrooms: Yup.number().required('Number of bathrooms is required'),
+      numberOfBedrooms: Yup.number().required('Number of numberOfBedrooms is required'),
+      numberOfBathrooms: Yup.number().required('Number of numberOfBathrooms is required'),
       area: Yup.number().required('Area is required'),
     }),
+
     onSubmit: async (values) => {
       try {
         const response = await fetch('/api/property/add', {
@@ -95,24 +100,29 @@ const PropertyDetailsForm = () => {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            ...values, images: [imgUrl], address: {
-
-            }
+            ...values,
+            images: [imgUrl],
           })
         });
+        const data = await response.json()
+        if (data.error){ return toast.error(data.error) }
+        toast.success("Property added successfully")
 
-        const data = await response.json();
+        // Reset form values after successful submission
+        formik.resetForm();
 
-        if (data.error) {
-          throw new Error('Added failed');
-        }
+        // Optionally, you can add code to handle success feedback to the user
       } catch (error) {
-        console.log('Error:', error);
+        console.error('Error:', error);
+        // Optionally, you can add code to handle error feedback to the user
       }
     }
+
   });
 
   return (
+    <>
+    <NavBar />
     <Box style={useStyles.container}>
       <Container component="main" maxWidth="sm">
         <Paper elevation={6} style={useStyles.paper}>
@@ -149,66 +159,71 @@ const PropertyDetailsForm = () => {
               error={formik.touched.description && Boolean(formik.errors.description)}
               helperText={formik.touched.description && formik.errors.description}
             />
+
             <TextField
               fullWidth
               margin="normal"
               variant="outlined"
               id="street"
-              name="street"
-              label="Street"
-              value={formik.values.address.street}
-              onChange={formik.handleChange}
-              error={formik.values.address.street && Boolean(formik.errors.address.street)}
-              helperText={formik.values.address.street && formik.errors.address.street}
-            />
-          <TextField
-              fullWidth
-              margin="normal"
-              variant="outlined"
-              id="address.street"
-              name="address.street"
+              name="address.street" // Modified to access nested property
               label="Street"
               value={formik.values.address.street}
               onChange={formik.handleChange}
               error={formik.touched['address.street'] && Boolean(formik.errors['address.street'])}
               helperText={formik.touched['address.street'] && formik.errors['address.street']}
             />
+
             <TextField
               fullWidth
               margin="normal"
               variant="outlined"
-              id="address.state"
-              name="address.state"
+              id="state"
+              name="address.state" // Modified to access nested property
               label="State"
               value={formik.values.address.state}
               onChange={formik.handleChange}
               error={formik.touched['address.state'] && Boolean(formik.errors['address.state'])}
               helperText={formik.touched['address.state'] && formik.errors['address.state']}
             />
+
             <TextField
               fullWidth
               margin="normal"
               variant="outlined"
-              id="address.postalCode"
-              name="address.postalCode"
+              id="postalCode"
+              name="address.postalCode" // Modified to access nested property
               label="PostalCode"
               value={formik.values.address.postalCode}
               onChange={formik.handleChange}
               error={formik.touched['address.postalCode'] && Boolean(formik.errors['address.postalCode'])}
               helperText={formik.touched['address.postalCode'] && formik.errors['address.postalCode']}
             />
+
             <TextField
               fullWidth
               margin="normal"
               variant="outlined"
-              id="address.country"
-              name="address.country"
+              id="country"
+              name="address.country" // Modified to access nested property
               label="Country"
               value={formik.values.address.country}
               onChange={formik.handleChange}
               error={formik.touched['address.country'] && Boolean(formik.errors['address.country'])}
               helperText={formik.touched['address.country'] && formik.errors['address.country']}
             />
+            <TextField
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              id="city"
+              name="address.city"
+              label="City"
+              value={formik.values.address.city}
+              onChange={formik.handleChange}
+              error={formik.touched['address.city'] && Boolean(formik.errors['address.city'])}
+              helperText={formik.touched['address.city'] && formik.errors['address.city']}
+            />
+
             <TextField
               fullWidth
               margin="normal"
@@ -226,27 +241,27 @@ const PropertyDetailsForm = () => {
               fullWidth
               margin="normal"
               variant="outlined"
-              id="bedrooms"
-              name="bedrooms"
+              id="numberOfBedrooms"
+              name="numberOfBedrooms"
               label="Number of Bedrooms"
               type="number"
-              value={formik.values.bedrooms}
+              value={formik.values.numberOfBedrooms}
               onChange={formik.handleChange}
-              error={formik.touched.bedrooms && Boolean(formik.errors.bedrooms)}
-              helperText={formik.touched.bedrooms && formik.errors.bedrooms}
+              error={formik.touched.numberOfBedrooms && Boolean(formik.errors.numberOfBedrooms)}
+              helperText={formik.touched.numberOfBedrooms && formik.errors.numberOfBedrooms}
             />
             <TextField
               fullWidth
               margin="normal"
               variant="outlined"
-              id="bathrooms"
-              name="bathrooms"
+              id="numberOfBathrooms"
+              name="numberOfBathrooms"
               label="Number of Bathrooms"
               type="number"
-              value={formik.values.bathrooms}
+              value={formik.values.numberOfBathrooms}
               onChange={formik.handleChange}
-              error={formik.touched.bathrooms && Boolean(formik.errors.bathrooms)}
-              helperText={formik.touched.bathrooms && formik.errors.bathrooms}
+              error={formik.touched.numberOfBathrooms && Boolean(formik.errors.numberOfBathrooms)}
+              helperText={formik.touched.numberOfBathrooms && formik.errors.numberOfBathrooms}
             />
             <TextField
               fullWidth
@@ -305,13 +320,16 @@ const PropertyDetailsForm = () => {
               color="primary"
               type="submit"
               style={useStyles.submit}
+              disabled={!formik.isValid} // Disable the button if the form is not valid
             >
               Submit
             </Button>
+
           </form>
         </Paper>
       </Container>
     </Box>
+    </>
   );
 };
 
