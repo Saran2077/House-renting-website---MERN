@@ -3,6 +3,8 @@ import { AppBar, Toolbar, Typography, Button, Grid, Container, TextField, Select
 import { makeStyles } from '@material-ui/core/styles';
 import backgroundImage from "../data/background.jpg"; // Replace with your image path
 import { Link, useNavigate } from 'react-router-dom';
+import NavBar from './commons/navBar';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -53,10 +55,9 @@ const useStyles = makeStyles((theme) => ({
     height: '100%',
   },
 }));
-
 const HomePage = () => {
-  const classes = useStyles();
   const navigate = useNavigate();
+  const classes = useStyles();
   const [location, setLocation] = useState('');
   const [bedrooms, setBedrooms] = useState('');
   const [bathrooms, setBathrooms] = useState('');
@@ -90,24 +91,14 @@ const HomePage = () => {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static" className={classes.appBar}>
-        <Toolbar>
-          <Typography variant="h6" className={classes.title}>
-            Rentify
-          </Typography>
-          <Button color="inherit">Home</Button>
-          <Button color="inherit">WishList</Button>
-          <Button color="inherit" onClick={() => navigate("/SellingDetail")}>Sell</Button>
-          <Button color="inherit" onClick={() => navigate("/Login")}>Sign In</Button>
-        </Toolbar>
-      </AppBar>
+      <NavBar />
       <div className={classes.background}>
         <div className={classes.overlay}>
           <Typography variant="h3" gutterBottom>
-            Find your next dream home
+            Find your dream home
           </Typography>
           <Typography variant="h6" gutterBottom>
-            Real estate for sale
+            BUY | SELL | RENT
           </Typography>
           <Container className={classes.searchContainer}>
             <Grid container spacing={3}>
@@ -208,7 +199,7 @@ const HomePage = () => {
               <Grid item xs={12} sm={6} md={3}>
                 <Button
                   variant="contained"
-                  color= "#C73659"
+                  color="#C73659"
                   className={classes.button}
                   onClick={handleSearch}
                 >

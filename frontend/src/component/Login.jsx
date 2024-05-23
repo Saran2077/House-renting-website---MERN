@@ -4,6 +4,8 @@ import * as Yup from 'yup';
 import { Container, Box, Typography, Button, TextField, Paper, Avatar } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import {useNavigate} from 'react-router-dom';
+import { useRecoilState } from 'recoil';
+import userAtom from '../atom/userAtom.js';
 
 const useStyles = {
   container: {
@@ -38,6 +40,7 @@ const useStyles = {
 };
 
 const Login = () => { 
+  const [user, setUser] = useRecoilState(userAtom)
   const formik = useFormik({ 
     initialValues: { 
       email: '', 
@@ -47,8 +50,28 @@ const Login = () => {
       email: Yup.string().email('Invalid email address').required('Required'), 
       password: Yup.string().required('Required') 
     }), 
-    onSubmit: values => { 
-      console.log('Form Values:', values);
+    onSubmit: async (values, { setSubmitting }) => { 
+      try {
+        const response = await fetch('/api/user/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(values)
+        });
+
+        const data = await response.json()
+
+        if (data.error) {
+          throw new Error('Login failed');
+        }
+        setUser(data)
+        localStorage.setItem("user", JSON.stringify(data))
+      } catch (error) {
+        console.log('Error:', error);
+      } finally {
+        setSubmitting(false);
+      }
     } 
   }); 
 

@@ -4,6 +4,10 @@ import * as Yup from 'yup';
 import { Container, Box, Typography, Button, TextField, Paper, Avatar, Grid } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import { useNavigate } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
+import userAtom from '../atom/userAtom.js';
+import usePreviewImg from '../hooks/usePreviewImg.js';
+import { Image } from '@mui/icons-material';
 
 const useStyles = {
   container: {
@@ -38,7 +42,8 @@ const useStyles = {
 };
 
 const Signup = () => {
-  const [profilePicture, setProfilePicture] = useState(null);
+  const { imgUrl, handleImageChange } = usePreviewImg();
+  const [user, setUser] = useRecoilState(userAtom);
   const navigate = useNavigate();
 
   const formik = useFormik({
@@ -47,24 +52,47 @@ const Signup = () => {
       lastName: '',
       email: '',
       password: '',
-      phone: ''
+      phoneNumber: ''
     },
     validationSchema: Yup.object({
       firstName: Yup.string().required('First name is required'),
       lastName: Yup.string().required('Last name is required'),
       email: Yup.string().email('Invalid email address').required('Email is required'),
       password: Yup.string().required('Password is required').min(8, 'Password must be at least 8 characters'),
-      phone: Yup.string().required('Phone is required').min(10, 'Phone number must be at least 10 characters'),
+      phoneNumber: Yup.string().required('Phone is required').min(10, 'Phone number must be at least 10 characters'),
     }),
-    onSubmit: (values) => {
-      console.log(values);
-      console.log(profilePicture);
-    },
-  });
+    onSubmit: async (values, { setSubmitting }) => { 
+      try {
+        const response = await fetch('/api/user/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            password: values.password,
+            phoneNumber: values.phoneNumber, // Map phoneNumber to phone
+            avatar: imgUrl
+          })
+        });
 
-  const handleProfilePictureChange = (event) => {
-    setProfilePicture(event.currentTarget.files[0]);
-  };
+        const data = await response.json();
+
+        if (data.error) {
+          throw new Error('Register failed');
+        }
+        setUser(data);
+        localStorage.setItem("user", JSON.stringify(data));
+        navigate('/');
+      } catch (error) {
+        console.log('Error:', error);
+      } finally {
+        setSubmitting(false);
+      }
+    } 
+  });
 
   return (
     <Box style={useStyles.container}>
@@ -140,14 +168,13 @@ const Signup = () => {
                   fullWidth
                   margin="normal"
                   variant="outlined"
-                  id="phone"
-                  name="phone"
-                  label="Phone"
-                  type="phone"
-                  value={formik.values.phone}
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  label="Phone Number"
+                  value={formik.values.phoneNumber}
                   onChange={formik.handleChange}
-                  error={formik.touched.phone && Boolean(formik.errors.phone)}
-                  helperText={formik.touched.phone && formik.errors.phone}
+                  error={formik.touched.phoneNumber && Boolean(formik.errors.phoneNumber)}
+                  helperText={formik.touched.phoneNumber && formik.errors.phoneNumber}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -160,12 +187,12 @@ const Signup = () => {
                   <input
                     type="file"
                     hidden
-                    onChange={handleProfilePictureChange}
+                    onChange={handleImageChange}
                   />
                 </Button>
-                {profilePicture && (
+                {imgUrl && (
                   <Avatar
-                    src={URL.createObjectURL(profilePicture)}
+                    src={imgUrl}
                     alt="Profile Picture"
                     style={{ marginTop: '1rem', width: '100px', height: '100px' }}
                   />

@@ -58,4 +58,33 @@ const likeUnlikeProperty = async(req, res) => {
     }
 }
 
-export { addProperty, getProperty, likeUnlikeProperty }
+const searchProperty = async(req, res) => {
+    try {
+        const { location, bedrooms, bathrooms, price, amenities } = req.body;
+        const query = {};
+
+        if (location) {
+        query['address.state'] = location;
+        }
+        if (bedrooms) {
+        query.numberOfBedrooms = parseInt(bedrooms, 10);
+        }
+        if (bathrooms) {
+        query.numberOfBathrooms = parseInt(bathrooms, 10);
+        }
+        if (price) {
+        query.price = { $lte: parseInt(price, 10) };
+        }
+        if (amenities) {
+        query.amenities = { $all: amenities.split(',') };
+        }
+
+        const properties = await Property.find(query);
+        res.status(200).json(properties);
+    } catch (error) {
+        res.status(500).json({ error: error.message })
+        console.log(`Error in search: ${error.message}`)
+    }
+}
+
+export { addProperty, getProperty, likeUnlikeProperty, searchProperty }
