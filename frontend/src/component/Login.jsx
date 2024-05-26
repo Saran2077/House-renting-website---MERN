@@ -78,9 +78,9 @@ const Login = () => {
         if (data.error) {
           return toast.error(data.error);
         }
-        setUser(data);
+        setUser(data.user);
         toast.success(data.message);
-        localStorage.setItem("user", JSON.stringify(data));
+        localStorage.setItem("user", JSON.stringify(data.user));
         navigate('/');
       } catch (error) {
         console.log('Error:', error);

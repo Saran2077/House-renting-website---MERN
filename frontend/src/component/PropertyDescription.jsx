@@ -164,6 +164,7 @@ const PropertyDescription = () => {
                     variant="contained"
                     color="primary"
                     onClick={handleInterested}
+                    disabled={!user}
                     sx={{
                       backgroundColor: "#C73659",
                       "&:hover": {
@@ -175,6 +176,7 @@ const PropertyDescription = () => {
                     I'm interested
                   </Button>
                   <Button
+                    disabled={!user}
                     variant="outlined"
                     color="primary"
                     onClick={handleWishList}
@@ -187,7 +189,7 @@ const PropertyDescription = () => {
                       },
                     }}
                   >
-                    { !user.wishlist.includes(property._id) ? "Add to Wishlist" : "Remove from WishList"}
+                    { !user || !user.wishlist.includes(property._id) ? "Add to Wishlist" : "Remove from WishList"}
                   </Button>
                   <Box sx={{ display: 'flex', gap: 1 }}>
                     <IconButton onClick={handleLike}>
