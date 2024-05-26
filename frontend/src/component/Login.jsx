@@ -1,46 +1,58 @@
-import React from 'react'; 
+import React, { useState } from 'react'; 
 import { useFormik } from 'formik'; 
 import * as Yup from 'yup';
-import { Container, Box, Typography, Button, TextField, Paper, Avatar } from '@mui/material';
+import { Container, Box, Typography, Button, TextField, Paper, Avatar, CircularProgress } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import userAtom from '../atom/userAtom.js';
+import { toast } from 'react-toastify';
 
 const useStyles = {
   container: {
-    backgroundImage: 'url(https://source.unsplash.com/featured/?house)',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
     minHeight: '100vh',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#f7f6f6',
     padding: '20px',
   },
   paper: {
-    padding: '30px',
+    padding: '40px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    backgroundColor: '#fff',
     borderRadius: '15px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
   },
   avatar: {
     margin: '10px',
-    backgroundColor: 'primary.main',
+    backgroundColor: '#C73659',
   },
   form: {
-    width: '100%', // Fix IE 11 issue.
+    width: '100%',
     marginTop: '20px',
   },
   submit: {
-    marginTop: '30px',
+    marginTop: '20px',
+    backgroundColor: '#C73659',
+    '&:hover': {
+      backgroundColor: '#b82e4e',
+    },
+  },
+  signUpLink: {
+    marginTop: '20px',
+    display: 'flex',
+    justifyContent: 'center',
   },
 };
 
 const Login = () => { 
-  const [user, setUser] = useRecoilState(userAtom)
+  const [user, setUser] = useRecoilState(userAtom);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
   const formik = useFormik({ 
     initialValues: { 
       email: '', 
@@ -52,31 +64,34 @@ const Login = () => {
     }), 
     onSubmit: async (values, { setSubmitting }) => { 
       try {
+        setIsLoading(true);
         const response = await fetch('/api/user/login', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify(values)
+          body: JSON.stringify(values),
         });
 
-        const data = await response.json()
+        const data = await response.json();
 
         if (data.error) {
-          throw new Error('Login failed');
+          return toast.error(data.error);
         }
-        setUser(data)
-        localStorage.setItem("user", JSON.stringify(data))
+        setUser(data);
+        toast.success(data.message);
+        localStorage.setItem("user", JSON.stringify(data));
+        navigate('/');
       } catch (error) {
         console.log('Error:', error);
+        toast.error('An error occurred while logging in.');
       } finally {
+        setIsLoading(false);
         setSubmitting(false);
       }
-    } 
-  }); 
+    }, 
+  });
 
-  const navigate = useNavigate();
- 
   return ( 
     <Box style={useStyles.container}>
       <Container component="main" maxWidth="xs">
@@ -116,13 +131,20 @@ const Login = () => {
               variant="contained" 
               color="primary" 
               type="submit" 
+              disabled={isLoading}
               style={useStyles.submit}
             >
-              Login
+              {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Login'}
             </Button>
-            <p>Don't have an account 
-            <Button color="inherit" onClick={() => navigate("/signup")}>Sign Up</Button></p>
-          </form> 
+          </form>
+          <Box style={useStyles.signUpLink}>
+            <Typography variant="body2">
+              Don't have an account? 
+              <Button color="primary" onClick={() => navigate("/signup")}>
+                Sign Up
+              </Button>
+            </Typography>
+          </Box>
         </Paper>
       </Container>
     </Box>

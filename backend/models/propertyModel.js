@@ -16,7 +16,7 @@ const propertySchema = new mongoose.Schema({
     numberOfBathrooms: { type: Number, required: true },
     area: { type: Number, required: true }, // in square feet
     amenities: { type: [String], default: [] }, // e.g., ["pool", "gym", "garden"]
-    images: { type: [String], default: [] }, 
+    images: [{ type: [String], default: [] }], 
     likes: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }

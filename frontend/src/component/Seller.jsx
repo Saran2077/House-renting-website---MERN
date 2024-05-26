@@ -1,272 +1,94 @@
-import React, { useEffect, useState } from "react";
-import {
-    Container,
-    Typography,
-    Button,
-    Card,
-    CardContent,
-    Stack,
-    Grid,
-    Box,
-    CircularProgress,
-    Divider,
-    Avatar,
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { useRecoilState } from "recoil";
-import userAtom from "../atom/userAtom.js";
-import { toast } from "react-toastify";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import NavBar from "./commons/navBar.jsx";
+import React, { useEffect, useState } from 'react';
+import { Container, Box, Typography, CircularProgress, Grid, Card, CardContent, CardMedia, Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
+import userAtom from '../atom/userAtom.js';
+import { toast } from 'react-toastify';
+import NavBar from './commons/navBar.jsx';
 
-const useStyles = {
-    container: {
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "space-between",
-        // justifyContent: "center",
-        padding: "20px",
-        paddingBottom: "80px", // Ensure space for the bottom bar
-        position: "relative",
-    },
-    card: {
-        display: "flex",
-        marginBottom: "20px",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-        borderRadius: "10px",
-    },
-    cardContent: {
-        display: "flex",
-        width: "100%",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: "20px",
-    },
-    productImage: {
-        width: "100px",
-        height: "100px",
-        borderRadius: "10px",
-        objectFit: "cover",
-    },
-    wishlistIcon: {
-        backgroundColor: "white",
-        borderRadius: "50%",
-        padding: "5px",
-        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-        cursor: "pointer",
-    },
-    emptyWishlist: {
-        textAlign: "center",
-        position: "relative",
-    },
-    emptyWishlistImage: {
-        width: "100%",
-        maxHeight: "300px",
-    },
-    emptyWishlistText: {
-        position: "absolute",
-        bottom: "10%",
-        left: "50%",
-        transform: "translateX(-50%)",
-        textAlign: "center",
-    },
-    goToHomeButton: {
-        width: "160px",
-        padding: 1,
-        borderRadius: "30px",
-        color: "#fff",
-        fontWeight: "bold",
-        boxShadow: "0 1px 4px rgba(0, 0, 0, 0.3)",
-        marginTop: "16px",
-    },
-    bottomBar: {
-        position: "absolute",
-        bottom: 0,
-        width: "100%",
-        backgroundColor: "white",
-        padding: "20px 20px",
-        boxShadow: "0 -2px 4px rgba(0, 0, 0, 0.1)",
-        display: "flex",
-        justifyContent: "flex-end",
-    },
-    addButton: {
-        width: "100px",
-        borderRadius: "10px",
-        fontWeight: "bold",
-    },
-};
+const PropertyList = () => {
+  const [user, setUser] = useRecoilState(userAtom);
+  const [isLoading, setIsLoading] = useState(true);
+  const [properties, setProperties] = useState([]);
+  const navigate = useNavigate();
 
-const WishListPage = () => {
-    const [wishlistItems, setWishlistItems] = useState([]);
-    const [user, setUser] = useRecoilState(userAtom);
-    const navigate = useNavigate();
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        const getWishlist = async () => {
-            try {
-                const res = await fetch("/api/user/wishlist");
-                const data = await res.json();
-                setWishlistItems(data);
-            } catch (error) {
-                console.log(error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        getWishlist();
-    }, []);
-
-    const handleWishList = async (e, productId) => {
-        e.stopPropagation();
-        try {
-            const res = await fetch(`/api/user/wishlist`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    id: productId,
-                }),
-            });
-            const data = await res.json();
-            if (data.error) return toast.error(data.error);
-            let newUser = { ...user, wishlist: data.wishlist };
-            toast.success(data.message);
-            setWishlistItems(
-                wishlistItems.filter((wishlist) => wishlist._id !== productId)
-            );
-
-            setUser(newUser);
-            localStorage.setItem("user", JSON.stringify(newUser));
-        } catch (error) {
-            toast.error(error);
-        }
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`/api/property/user`);
+        const data = await response.json();
+        setProperties(data);
+      } catch (error) {
+        console.error('Error fetching properties:', error);
+        toast.error('An error occurred while fetching properties.');
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    if (isLoading) {
-        return (
-            <Box sx={{ display: "grid", placeContent: "center", minHeight: "100vh" }}>
-                <CircularProgress disableShrink />
-            </Box>
-        );
+    if (user) {
+      fetchProperties();
     }
+  }, [user]);
 
-    return (
-        <div style={{ backgroundColor: '#F7F6F6' }}>
-
-            <NavBar />
-            <Container sx={useStyles.container}>
-                {wishlistItems?.length ? (
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <Typography variant="h4" gutterBottom>
-                               <strong> My Selling</strong>
-                            </Typography>
-                            {/* <Divider sx={{ marginBottom: "1rem" }} /> */}
-                            {wishlistItems.map((item) => (
-                                <Card
-                                    key={item._id}
-                                    onClick={() => navigate(`/product/${item._id}`)}
-                                    sx={useStyles.card}
-                                >
-                                    <CardContent sx={useStyles.cardContent}>
-                                        <Stack direction="row" spacing={2}>
-                                            {item.images.length > 0 ? (
-                                                <Avatar
-                                                    variant="square"
-                                                    src={item.images[0]}
-                                                    alt={item.title}
-                                                    sx={useStyles.productImage}
-                                                />
-                                            ) : (
-                                                <Avatar
-                                                    variant="square"
-                                                    sx={useStyles.productImage}
-                                                >
-                                                    No Image
-                                                </Avatar>
-                                            )}
-                                            <Box>
-                                                <Typography variant="subtitle1">{item.title}</Typography>
-                                                <Typography variant="body2" color="textSecondary">
-                                                    {item.description}
-                                                </Typography>
-                                                <Typography variant="body1">
-                                                    Price: <strong>₹{item.price}</strong>
-                                                </Typography>
-                                                <Typography variant="body2" color="textSecondary">
-                                                    {item.numberOfBedrooms} Bedrooms,{" "}
-                                                    {item.numberOfBathrooms} Bathrooms
-                                                </Typography>
-                                                <Typography variant="body2" color="textSecondary">
-                                                    Area: {item.area} sq ft
-                                                </Typography>
-                                                <Typography variant="body2" color="textSecondary">
-                                                    {item.amenities.join(", ")}
-                                                </Typography>
-                                                <Typography variant="body2" color="textSecondary">
-                                                    Address: {item.address.street}, {item.address.city},{" "}
-                                                    {item.address.state}, {item.address.postalCode},{" "}
-                                                    {item.address.country}
-                                                </Typography>
-                                            </Box>
-                                        </Stack>
-                                        <Box sx={{ display: "flex", alignItems: "center" }}>
-                                            {user.wishlist.includes(item._id) ? (
-                                                <FavoriteIcon
-                                                    sx={useStyles.wishlistIcon}
-                                                    onClick={(e) => handleWishList(e, item._id)}
-                                                />
-                                            ) : (
-                                                <FavoriteBorderIcon
-                                                    sx={useStyles.wishlistIcon}
-                                                    onClick={(e) => handleWishList(e, item._id)}
-                                                />
-                                            )}
-                                        </Box>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </Grid>
-                    </Grid>
-                ) : (
-                    <Box sx={useStyles.emptyWishlist}>
-                        <img
-                            src="https://assets.materialup.com/uploads/66fb8bdf-29db-40a2-996b-60f3192ea7f0/preview.png"
-                            alt="Empty Wishlist"
-                            style={useStyles.emptyWishlistImage}
-                        />
-                        <Box sx={useStyles.emptyWishlistText}>
-                            <Typography>Your wishlist is empty!</Typography>
-                            <Typography>Add something to make me happy.</Typography>
-                            <Button
-                                onClick={() => {
-                                    navigate("/");
-                                }}
-                                variant="contained"
-                                color="success"
-                                sx={useStyles.goToHomeButton}
-                            >
-                                Go to Home
-                            </Button>
-                        </Box>
+  return (
+    <>
+        <NavBar />
+    <Container>
+      <Box mt={4} mb={2}>
+        <Typography variant="h4" gutterBottom>
+          My Properties
+        </Typography>
+      </Box>
+      {isLoading ? (
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Grid container spacing={4}>
+          {properties.length === 0 ? (
+            <Typography variant="body1">You have not uploaded any properties yet.</Typography>
+          ) : (
+            properties.map(property => (
+              <Grid key={property._id} item xs={12} sm={6} md={4}>
+                <Card>
+                  <CardMedia
+                    component="img"
+                    height="200"
+                    image={property.images[0]} // Assuming images array contains URLs of property images
+                    alt={property.title}
+                  />
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                      {property.title}
+                    </Typography>
+                    <Typography variant="subtitle1" color="textSecondary" gutterBottom>
+                      {property.address.city}, {property.address.state}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      Price: ₹{property.price}
+                    </Typography>
+                    <Box mt={2}>
+                      <Button variant="outlined" color="primary" onClick={() => navigate(`/property/${property._id}`)}>
+                        View Details
+                      </Button>
                     </Box>
-                )}
-                <Box sx={useStyles.bottomBar}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        sx={useStyles.addButton}
-                    >
-                        Add
-                    </Button>
-                </Box>
-            </Container></div>
-
-    );
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))
+          )}
+        </Grid>
+      )}
+      <Box mt={4} display="flex" justifyContent="center">
+        <Button variant="contained" color="primary" onClick={() => navigate("/addProperty")}>
+          Add to Property
+        </Button>
+      </Box>
+    </Container>
+    </>
+  );
 };
 
-export default WishListPage;
+export default PropertyList;

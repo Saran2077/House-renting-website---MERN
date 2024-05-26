@@ -15,7 +15,10 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Grid,
 } from "@mui/material";
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import ShareIcon from '@mui/icons-material/Share';
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import userAtom from "../atom/userAtom.js";
@@ -85,7 +88,6 @@ const PropertyDescription = () => {
   };
 
   const handleLike = () => {
-    // Implement your logic here
     toast.info("You liked this property!");
   };
 
@@ -102,65 +104,67 @@ const PropertyDescription = () => {
       </Box>
     );
   }
-  console.log(property.images[0]);
 
   return (
     <>
-      <NavBar></NavBar>
-      <Container>
+      <NavBar />
+      <Container sx={{ mt: 4 }}>
         {property && (
           <>
             <Box sx={{ mb: 4 }}>
-              <Typography variant="h2" sx={{ mt: 2, fontWeight: 700 }}>
+              <Typography variant="h4" sx={{ fontWeight: 700 }}>
                 {property.title}
               </Typography>
-              <Typography>
+              <Typography variant="subtitle1" color="textSecondary">
                 {property.address.city}, {property.address.state}
               </Typography>
             </Box>
-            <Card sx={{ mt: 4 }}>
-              <CardMedia
-                component="img"
-                height="400"
-                image={property.images[0]}
-                alt={property.title}
-              />
-              <CardContent>
-                <Typography
-                  component={"div"}
-                  sx={{
-                    border: "1px solid",
-                    padding: "5px 10px",
-                    width: "fit-content",
-                    borderRadius: "5px",
-                    color: "#C73659",
-                  }}
-                >
-                  {property.numberOfBedrooms}{" "}
-                  {property.numberOfBedrooms > 1 ? "BEDROOMS" : "BEDROOM"}
-                </Typography>
-
-                <Typography variant="body1" sx={{ marginTop: 2 }} gutterBottom>
-                  {property.description}
-                </Typography>
-                <Typography variant="h5" mt={2} mb={1}>
-                  Price: <b>₹{property.price}</b>
-                </Typography>
-                <Typography variant="body2" gutterBottom>
-                  Address:
-                </Typography>
-                <Typography variant="body2" gutterBottom>
-                  {property.address.street}, {property.address.city},{" "}
-                  {property.address.state}, {property.address.postalCode},{" "}
-                  {property.address.country}
-                </Typography>
-                <Box mt={2} display="flex" alignItems="center">
+            <Grid container spacing={4}>
+              <Grid item xs={12} md={8}>
+                <Card>
+                  <CardMedia
+                    component="img"
+                    height="500"
+                    image={property.images[0]}
+                    alt={property.title}
+                  />
+                  <CardContent>
+                    <Typography
+                      variant="h6"
+                      component="div"
+                      sx={{
+                        display: 'inline-block',
+                        border: "1px solid",
+                        padding: "5px 10px",
+                        borderRadius: "5px",
+                        color: "#C73659",
+                        mb: 2,
+                      }}
+                    >
+                      {property.numberOfBedrooms} {property.numberOfBedrooms > 1 ? "BEDROOMS" : "BEDROOM"}
+                    </Typography>
+                    <Typography variant="body1" gutterBottom>
+                      {property.description}
+                    </Typography>
+                    <Typography variant="h5" mt={2} mb={1}>
+                      Price: <b>₹{property.price}</b>
+                    </Typography>
+                    <Typography variant="body2" gutterBottom>
+                      Address:
+                    </Typography>
+                    <Typography variant="body2" gutterBottom>
+                      {property.address.street}, {property.address.city}, {property.address.state}, {property.address.postalCode}, {property.address.country}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <Button
                     variant="contained"
                     color="primary"
                     onClick={handleInterested}
                     sx={{
-                      ml: "auto",
                       backgroundColor: "#C73659",
                       "&:hover": {
                         backgroundColor: "#C73659",
@@ -170,9 +174,32 @@ const PropertyDescription = () => {
                   >
                     I'm interested
                   </Button>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={handleWishList}
+                    sx={{
+                      color: "#C73659",
+                      borderColor: "#C73659",
+                      "&:hover": {
+                        backgroundColor: "rgba(199, 54, 89, 0.1)",
+                        borderColor: "#C73659",
+                      },
+                    }}
+                  >
+                    { !user.wishlist.includes(property._id) ? "Add to Wishlist" : "Remove from WishList"}
+                  </Button>
+                  <Box sx={{ display: 'flex', gap: 1 }}>
+                    <IconButton onClick={handleLike}>
+                      <FavoriteIcon color="error" />
+                    </IconButton>
+                    <IconButton>
+                      <ShareIcon />
+                    </IconButton>
+                  </Box>
                 </Box>
-              </CardContent>
-            </Card>
+              </Grid>
+            </Grid>
             {seller && (
               <Dialog open={isModalOpen} onClose={handleCloseModal}>
                 <DialogTitle>Seller Details</DialogTitle>

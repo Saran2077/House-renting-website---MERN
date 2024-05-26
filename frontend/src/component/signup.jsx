@@ -1,49 +1,56 @@
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Container, Box, Typography, Button, TextField, Paper, Avatar, Grid } from '@mui/material';
+import { Container, Box, Typography, Button, TextField, Paper, Avatar, Grid, CircularProgress } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import userAtom from '../atom/userAtom.js';
 import usePreviewImg from '../hooks/usePreviewImg.js';
-import { Image } from '@mui/icons-material';
+import { toast } from 'react-toastify';
 
 const useStyles = {
   container: {
-    backgroundImage: 'url(https://source.unsplash.com/featured/?house)',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
     minHeight: '100vh',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#f7f6f6',
     padding: '20px',
   },
   paper: {
-    padding: '30px',
+    padding: '40px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    backgroundColor: '#fff',
     borderRadius: '15px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
   },
   avatar: {
     margin: '10px',
-    backgroundColor: 'primary.main',
+    backgroundColor: '#C73659',
   },
   form: {
     width: '100%',
     marginTop: '20px',
   },
   submit: {
-    marginTop: '30px',
+    marginTop: '20px',
+    backgroundColor: '#C73659',
+    '&:hover': {
+      backgroundColor: '#b82e4e',
+    },
+  },
+  uploadButton: {
+    marginTop: '20px',
   },
 };
 
 const Signup = () => {
   const { imgUrl, handleImageChange } = usePreviewImg();
   const [user, setUser] = useRecoilState(userAtom);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const formik = useFormik({
@@ -59,10 +66,11 @@ const Signup = () => {
       lastName: Yup.string().required('Last name is required'),
       email: Yup.string().email('Invalid email address').required('Email is required'),
       password: Yup.string().required('Password is required').min(8, 'Password must be at least 8 characters'),
-      phoneNumber: Yup.string().required('Phone is required').min(10, 'Phone number must be at least 10 characters'),
+      phoneNumber: Yup.string().required('Phone number is required').min(10, 'Phone number must be at least 10 characters'),
     }),
-    onSubmit: async (values, { setSubmitting }) => { 
+    onSubmit: async (values, { setSubmitting }) => {
       try {
+        setIsLoading(true);
         const response = await fetch('/api/user/register', {
           method: 'POST',
           headers: {
@@ -73,7 +81,7 @@ const Signup = () => {
             lastName: values.lastName,
             email: values.email,
             password: values.password,
-            phoneNumber: values.phoneNumber, // Map phoneNumber to phone
+            phoneNumber: values.phoneNumber,
             avatar: imgUrl
           })
         });
@@ -81,17 +89,20 @@ const Signup = () => {
         const data = await response.json();
 
         if (data.error) {
-          throw new Error('Register failed');
+          return toast.error(data.error);
         }
-        setUser(data);
-        localStorage.setItem("user", JSON.stringify(data));
+        setUser(data.newUser);
+        toast.success(data.message);
+        localStorage.setItem("user", JSON.stringify(data.newUser));
         navigate('/');
       } catch (error) {
         console.log('Error:', error);
+        toast.error('An error occurred while signing up.');
       } finally {
         setSubmitting(false);
+        setIsLoading(false);
       }
-    } 
+    }
   });
 
   return (
@@ -182,6 +193,7 @@ const Signup = () => {
                   variant="contained"
                   component="label"
                   fullWidth
+                  style={useStyles.uploadButton}
                 >
                   Upload Profile Picture
                   <input
@@ -204,9 +216,10 @@ const Signup = () => {
                   variant="contained" 
                   color="primary" 
                   type="submit" 
+                  disabled={isLoading}
                   style={useStyles.submit}
                 >
-                  Sign Up
+                  {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Sign Up'}
                 </Button>
               </Grid>
             </Grid>

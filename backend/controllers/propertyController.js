@@ -2,7 +2,6 @@ import Property from "./../models/propertyModel.js";
 
 const addProperty = async (req, res) => {
   try {
-    console.log("addproperty");
     const {
       sellerId,
       title,
@@ -84,6 +83,7 @@ const likeUnlikeProperty = async (req, res) => {
 const searchProperty = async (req, res) => {
   try {
     const { location, bedrooms, bathrooms, price, amenities } = req.body;
+    console.log("Inside the req")
     const query = {};
 
     if (location) {
@@ -98,9 +98,9 @@ const searchProperty = async (req, res) => {
     if (price) {
       query.price = { $lte: parseInt(price, 10) };
     }
-    if (amenities) {
-      query.amenities = { $all: amenities.split(",") };
-    }
+    if (amenities && amenities.length > 0) query.amenities = { $all: amenities };
+
+    console.log(query)
 
     const properties = await Property.find(query);
     res.status(200).json(properties);
@@ -113,10 +113,12 @@ const searchProperty = async (req, res) => {
 const userProperty = async (req, res) => {
   try {
     const user = req.user;
+    const userProperties = await Property.find({sellerId: user._id })
+    res.status(200).json(userProperties)
   } catch (error) {
     res.status(500).json({ error: error.message });
     console.log(`Error in User: ${error.message}`);
   }
 };
 
-export { addProperty, getProperty, likeUnlikeProperty, searchProperty, getAllProperty }
+export { addProperty, getProperty, likeUnlikeProperty, searchProperty, getAllProperty, userProperty }
