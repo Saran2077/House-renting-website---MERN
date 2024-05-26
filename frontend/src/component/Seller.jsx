@@ -83,7 +83,7 @@ const PropertyList = () => {
       )}
       <Box mt={4} display="flex" justifyContent="center">
         <Button variant="contained" color="primary" onClick={() => navigate("/addProperty")}>
-          Add to Property
+          Add Property
         </Button>
       </Box>
     </Container>
