@@ -168,6 +168,9 @@ const HomePage = () => {
                       <Typography className={classes.priceTag}>
                         ${property.price}
                       </Typography>
+                      <Typography>
+                        Likes: {property.likes.length}
+                      </Typography>
                     </CardContent>
                     <CardActions className={classes.cardActions}>
                       <Button

@@ -68,12 +68,12 @@ const likeUnlikeProperty = async (req, res) => {
         (id) => id.valueOf() != user._id.valueOf()
       );
       await property.save();
-      return res.status(200).json({ message: "Successfully Unliked" });
+      return res.status(200).json({ message: "Successfully Unliked", likes: property.likes });
     }
-    console.log(user._id.valueOf(), user._id);
+
     property.likes.push(user._id);
     await property.save();
-    res.status(200).json({ message: "Successfully liked" });
+    res.status(200).json({ message: "Successfully liked", likes: property.likes });
   } catch (error) {
     res.status(500).json({ error: error.message });
     console.log(`Error in LikePost: ${error.message}`);
@@ -121,4 +121,36 @@ const userProperty = async (req, res) => {
   }
 };
 
-export { addProperty, getProperty, likeUnlikeProperty, searchProperty, getAllProperty, userProperty }
+const deleteProperty = async(req, res) => {
+  try {
+    const { id } = req.params;
+    const property = await Property.findById(id);
+    if (!property) {
+      return res.status(404).json({ error: "Property not found" })
+    }
+
+    await Property.findByIdAndDelete(id);
+    res.status(200).json({message: "Deleted successfully"})
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+    console.log(`Error in delete: ${error.message}`);
+  }
+}
+
+const updateProperty = async(req, res) => {
+  try {
+    const { id } = req.params;
+    const property = await Property.findById(id);
+    if (!property) {
+      return res.status(404).json({ error: "Property not found" })
+    }
+
+    const updatedProperty = await Property.findByIdAndUpdate(id);
+    res.status(200).json({message: "Updated successfully"})
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+    console.log(`Error in delete: ${error.message}`);
+  }
+}
+
+export { addProperty, getProperty, likeUnlikeProperty, searchProperty, getAllProperty, userProperty, deleteProperty, updateProperty }

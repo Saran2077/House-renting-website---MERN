@@ -24,6 +24,8 @@ import { toast } from "react-toastify";
 import userAtom from "../atom/userAtom.js";
 import { useRecoilState } from "recoil";
 import NavBar from "./commons/navBar.jsx";
+import { MdOutlineFavoriteBorder  } from "react-icons/md";
+
 
 const PropertyDescription = () => {
   const [property, setProperty] = useState(null);
@@ -87,8 +89,16 @@ const PropertyDescription = () => {
     setIsModalOpen(false);
   };
 
-  const handleLike = () => {
-    toast.info("You liked this property!");
+  const handleLike = async() => {
+    try {
+      const res = await fetch(`/api/property/like/${property._id}`)
+      const data = await res.json()
+      if (data.error) return toast.error(data.error)
+      toast.success(data.message)
+    setProperty({...property, likes: data.likes})
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   if (isLoading) {
@@ -129,6 +139,21 @@ const PropertyDescription = () => {
                     alt={property.title}
                   />
                   <CardContent>
+                    <Typography
+                      variant="h6"
+                      component="div"
+                      sx={{
+                        display: 'inline-block',
+                        border: "1px solid",
+                        padding: "5px 10px",
+                        borderRadius: "5px",
+                        color: "#C73659",
+                        mb: 2,
+                        marginRight: 4
+                      }}
+                    >
+                      {property.likes.length} {property.likes.length > 1 ? "LIKES" : "LIKE"}
+                    </Typography>
                     <Typography
                       variant="h6"
                       component="div"
@@ -192,8 +217,8 @@ const PropertyDescription = () => {
                     { !user || !user.wishlist.includes(property._id) ? "Add to Wishlist" : "Remove from WishList"}
                   </Button>
                   <Box sx={{ display: 'flex', gap: 1 }}>
-                    <IconButton onClick={handleLike}>
-                      <FavoriteIcon color="error" />
+                    <IconButton onClick={handleLike} disabled={!user}>
+                      {user && property.likes.includes(user._id) ? <FavoriteIcon color="error" /> : <MdOutlineFavoriteBorder  />}
                     </IconButton>
                     <IconButton>
                       <ShareIcon />

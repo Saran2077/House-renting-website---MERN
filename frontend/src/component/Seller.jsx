@@ -69,10 +69,17 @@ const PropertyList = () => {
                     <Typography variant="body2" color="textSecondary">
                       Price: ₹{property.price}
                     </Typography>
-                    <Box mt={2}>
-                      <Button variant="outlined" color="primary" onClick={() => navigate(`/property/${property._id}`)}>
-                        View Details
-                      </Button>
+                    <Box sx={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                      <Box mt={2}>
+                        <Button variant="outlined" color="primary" onClick={() => navigate(`/property/${property._id}`)}>
+                          View Details
+                        </Button>
+                      </Box>
+                      <Box mt={2}>
+                        <Button variant="outlined" color="primary" onClick={() => navigate(`/property/${property._id}`)}>
+                          Edit
+                        </Button>
+                      </Box>
                     </Box>
                   </CardContent>
                 </Card>
